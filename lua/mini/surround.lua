@@ -886,6 +886,23 @@ MiniSurround.highlight = function()
   H.region_highlight(buf_id, surr.left)
   H.region_highlight(buf_id, surr.right)
 
+  local left = vim.api.nvim_buf_get_text(
+    buf_id,
+    surr.left.from.line - 1, surr.left.from.col - 1,
+    surr.left.to.line - 1, surr.left.to.col, {}
+  )
+
+  local right = vim.api.nvim_buf_get_text(
+    buf_id,
+    surr.right.from.line - 1, surr.right.from.col - 1,
+    surr.right.to.line - 1, surr.right.to.col, {}
+  )
+
+  MiniSurround.config.custom_surroundings.y = {
+    input = { vim.iter(left):join("\n") .. "().-()" .. vim.iter(right):join("\n") },
+    output = { left = vim.iter(left):join("\n"), right = vim.iter(right):join("\n") },
+  }
+
   vim.defer_fn(function()
     H.region_unhighlight(buf_id, surr.left)
     H.region_unhighlight(buf_id, surr.right)
